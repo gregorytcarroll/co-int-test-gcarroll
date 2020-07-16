@@ -1,0 +1,15 @@
+Here are some reasons to why I chose certain configurations:
+
+1. I put the servers behind a load balancer to make them highly available - in the event of a box being unreachable, the LB will redirect to the available instance.
+2. The instances were put into an ASG limited to 10. This is for scalability reasons, as the box reached 70% utlisation, another box will be setup using the same user data
+3. The configuration for the HTML is placed on the S3 - this way its easily accessbile to be updated or changed without accessing the box via SSH
+4. Healthcheck is enabled for the LB to ensure its always available.
+5. Used variables where possible to provide it as a template for future use.
+6. Spread instances across multiple AZs to make it highly available for enterprise use
+
+Here are some things I would improve further with time:
+
+1. I would remove the credentials as variables - I would configure to call them from the S3 or store them on Terraform itself to ensure higher security
+2. Configure an SNS topic for the instances in case one goes down - this could then be factored into a ServiceNow alert. (However, the ASG should suffice for now with something simple like this)
+3. I'd preconfigure some more aspects such as instance profile creation, the template for the webpage itself and its upload to S3 - and add records as Route53 to have a more readable web address
+4. Configure Cloudfront for the website to enable edge security and add SSM certs (this would come into play if app was deployed at enterprise level)
