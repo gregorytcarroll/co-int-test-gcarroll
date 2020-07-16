@@ -7,7 +7,7 @@ Within the repo is everything needed to setup the application and have it runnin
 1. Create an S3 bucket and insert the webpage configuration. Upon launch of the ASG, the EC2s will copy the files from here to local.
 2. Make sure you have the below details at hand:
 
-A tfvars will need creating in your directory:
+Edit the TFVARS file to inlcude your:
 - access_key (AWS access key)
 - secret_key (AWS secret key)
 - region (AWS region)
