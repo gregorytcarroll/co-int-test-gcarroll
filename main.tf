@@ -1,35 +1,23 @@
 #----------------------------------------#
 #          Checkout Demo                 #
 #                                        #
-# Deploys Two servers to AWs behind LB   #
+# Deploys Two servers to AWS behind LB   #
 #                                        #
 #         Naming Convention              # 
 #           co = Checkout                #
 #----------------------------------------#
 
-# Configure AWS connection - details in 
+# Configure AWS connection - details in tfvars file
 provider "aws" {
   access_key = var.access_key
   secret_key = var.secret_key
   region     = var.region
 }
 
-terraform {
-  backend "s3" {
-    # Replace this with your bucket name
-    bucket         = "terraform-state-storage-cotest"
-    key            = "terraform/terraform.tfstate"
-    region         = "eu-west-2"
-    # Replace this with your DynamoDB table name 
-    dynamodb_table = "terraform-state-locks"
-    encrypt        = true
-  }
-}
 
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "terraform-state-storage-cotest"
-  # Enable versioning so we can see the full revision history of our
-  # state files
+  #Versioning enabled to see history of state file changes
   versioning {
     enabled = true
   }
@@ -53,7 +41,19 @@ resource "aws_dynamodb_table" "terraform_locks" {
   }
 }
 
-# Get the availability zones for the region specified in region variable
+terraform {
+  backend "s3" {
+    # Replace this with your bucket name (created as a prerequisite)
+    bucket         = "terraform-state-storage-cotest"
+    key            = "terraform/terraform.tfstate"
+    region         = "eu-west-2"
+    # Replace this with your DynamoDB table name (created above)
+    dynamodb_table = "terraform-state-locks"
+    encrypt        = true
+  }
+}
+
+# Get the availability zones for the region specified in region variable to deply instances across multiple AZs later
 data "aws_availability_zones" "all" {}
 
 module "webinfra" {
